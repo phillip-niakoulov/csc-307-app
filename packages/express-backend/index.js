@@ -1,8 +1,10 @@
 import express from "express";
+import cors from "cors";
 
 const app = express();
 const port = 8000;
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -75,10 +77,16 @@ const addUser = (user) => {
     return user;
 };
   
+
+const generateId = () => {
+    return Math.floor(Math.random() * 100000).toString();
+}
+
 app.post("/users", (req, res) => {
     const userToAdd = req.body;
+    userToAdd.id = generateId();
     addUser(userToAdd);
-    res.send();
+    res.status(201).send(userToAdd);
 });
 
 const findUserById = (id) =>
@@ -101,7 +109,7 @@ app.delete("/users/:id", (req, res) => {
         res.status(404).send("Resource not found.");
     } else {
         users["users_list"] = users["users_list"].filter(item => item !== result)
-        res.send();
+        res.status(204).send();
     }
 });
 
